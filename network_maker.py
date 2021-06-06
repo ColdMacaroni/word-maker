@@ -25,6 +25,8 @@ class Neuron:
         """
         Calculates the given inputs! Yes!
         :param inputs: A numpy array of the inputs!
+        :param weights: A numpy array of weights in case they need a
+                        temporary override
         :return: A numpy array of the results!
         """
         # This is done in case weights are overriden
