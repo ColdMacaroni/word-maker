@@ -12,12 +12,21 @@ class Neuron:
     def __init__():
         pass
 
+
+def tanh(x):
+    """
+    tanh function.
+    From https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/
+    """
+    return (2 / (1 + exp(-2 * x))) - 1
+
+
 def sigmoid(x):
     """
     Sigmoid function
     """
     # f(x) = 1/(1 + e^(-x))
-    return 1/(1 + exp(-abs(x)))
+    return 1/(1 + exp(-x))
 
 if __name__ == "__main__":
     print("Try importing instead!")
