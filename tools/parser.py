@@ -100,7 +100,7 @@ def main(raw_folder, parsed_folder, str_len=16, sep_char=';'):
 
         with output_file.open('a') as output:
             for word, length in words_n_lens:
-                output.write(f"{word}{sep_char}{length}")
+                output.write(f"{word}{sep_char}{length}\n")
 
 
 if __name__ == "__main__":

@@ -1,2 +1,6 @@
 .idea/*
 venv/*
+
+# You should use parser.py to generate em, i don't
+# wanna commit duplicates
+tools/training_data/*
