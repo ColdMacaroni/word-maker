@@ -4,11 +4,44 @@
 # parser.py Copyright (C) 2021 Sof
 # ^The GPL3 told me to put that there <shrug>
 
-# For sigmoid
-from numpy import array, exp
-
-
 # Here goes nothing!
+
+from numpy import array, exp, dot
+from numpy.random import uniform
+
+
+class HiddenLayer:
+    def __init__(self, neuron_num, inputs,
+                 weights=None, biases=None, activation_function=None):
+        """
+        Creates a hidden layer! Weights and biases randomized unless given!
+        :param neuron_num: An integer representing the amount of neurons
+        :param inputs: Int, the amount of inputs a neuron expects to receive
+
+        :param weights: A 2d numpy array of weights for each neuron.
+                        If this is not passed, they are assigned a
+                        random weight between -1 and 1
+
+        :param biases: A list of biases for each neuron
+                       If this is not passed, they are assigned a
+                       random bias between -1 and 1
+
+        :param activation_function: The function for each neuron
+        """
+        if weights is None:
+            # Generate random weights
+            weights = uniform(-1, 1, neuron_num * inputs)
+
+            # Reshape into 2D array
+            weights.reshape((neuron_num, inputs))
+
+
+        self.neurons = list()
+
+        for i in range(neuron_num):
+            pass
+
+
 class Neuron:
     def __init__(self, weights: array, bias=0, activation_function=None):
         """
@@ -33,7 +66,7 @@ class Neuron:
         if weights is None:
             weights = self.weights
 
-        results = inputs * weights + self.bias
+        results = dot(weights, inputs.T) + self.bias
 
         if self.activation_function is not None:
             return self.activation_function(results)
