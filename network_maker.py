@@ -21,14 +21,18 @@ class Neuron:
         self.bias = bias
         self.activation_function = activation_function
 
-    def calculate(self, inputs: array) -> array:
+    def calculate(self, inputs: array, weights=None) -> array:
         """
         Calculates the given inputs! Yes!
         :param inputs: A numpy array of the inputs!
         :return: A numpy array of the results!
         """
-        results = inputs * self.weights + self.bias
-        print(inputs, self.weights)
+        # This is done in case weights are overriden
+        if weights is None:
+            weights = self.weights
+
+        results = inputs * weights + self.bias
+
         if self.activation_function is not None:
             return self.activation_function(results)
 
