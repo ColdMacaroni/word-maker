@@ -5,12 +5,35 @@
 # ^The GPL3 told me to put that there <shrug>
 
 # For sigmoid
-from math import exp
+from numpy import array, exp
+
 
 # Here goes nothing!
 class Neuron:
-    def __init__():
-        pass
+    def __init__(self, weights: array, bias=0, activation_function=None):
+        """
+        Creates a neuron!!
+        :param weights: A numpy array defining the weight of each input
+        :param bias: The bias of this neuron, default is 0
+        :param activation_function: The activation function!
+        """
+        self.weights = weights
+        self.bias = bias
+        self.activation_function = activation_function
+
+    def calculate(self, inputs: array) -> array:
+        """
+        Calculates the given inputs! Yes!
+        :param inputs: A numpy array of the inputs!
+        :return: A numpy array of the results!
+        """
+        results = inputs * self.weights + self.bias
+        print(inputs, self.weights)
+        if self.activation_function is not None:
+            return self.activation_function(results)
+
+        else:
+            return results
 
 
 def tanh(x):
@@ -27,6 +50,7 @@ def sigmoid(x):
     """
     # f(x) = 1/(1 + e^(-x))
     return 1/(1 + exp(-x))
+
 
 if __name__ == "__main__":
     print("Try importing instead!")
