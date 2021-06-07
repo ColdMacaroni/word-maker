@@ -5,4 +5,4 @@ __pycache__/*
 
 # You should use parser.py to generate em, i don't
 # wanna commit duplicates
-tools/training_data/*
+tools/data/training_data/words_alpha.txt
