@@ -92,6 +92,15 @@ class Neuron:
             return results
 
 
+def relU(x):
+    """
+    Rectified linear
+    :param x:
+    :return:
+    """
+    return 0 if x <= 0 else x
+
+
 def tanh(x):
     """
     tanh function.
