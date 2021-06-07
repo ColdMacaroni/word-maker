@@ -6,7 +6,7 @@
 
 # Here goes nothing!
 
-from numpy import array, zeros, exp, dot
+from numpy import array, zeros, exp, dot, maximum
 from numpy.random import uniform
 
 
@@ -33,7 +33,7 @@ class HiddenLayer:
             weights = uniform(-1, 1, neuron_num * inputs)
 
             # Reshape into 2D array
-            weights = weights.reshape((inputs, neuron_num))
+            weights = weights.reshape((neuron_num, inputs))
 
         if biases is None:
             # Set em all to 0
@@ -44,7 +44,9 @@ class HiddenLayer:
         for i in range(neuron_num):
             self.neurons.add(Neuron(weights[i], biases[i], activation_function))
 
-    def process(self, inputs: array):
+        self.output = None
+
+    def forward(self, inputs: array):
         """
         Takes an array of inputs and process them through the neurons!
         :param inputs: array
@@ -52,9 +54,7 @@ class HiddenLayer:
         """
         # Pass all the inputs through each neuron and generate an
         # array/matrix of the results
-        results = array([neuron.process(inputs) for neuron in self.neurons])
-
-        return results
+        self.output = array([neuron.process(inputs) for neuron in self.neurons])
 
 
 class Neuron:
@@ -69,21 +69,14 @@ class Neuron:
         self.bias = bias
         self.activation_function = activation_function
 
-    def process(self, inputs: array, weights=None) -> array:
+    def process(self, inputs: array) -> array:
         """
         Calculates the given inputs! Yes!
         :param inputs: A numpy array of the inputs!
-        :param weights: A numpy array of weights in case they need a
-                        temporary override
         :return: A numpy array of the results!
         """
-        # This is done in case weights are overridden
-        if weights is None:
-            weights = self.weights
 
-        results = dot(weights, inputs) + self.bias
-
-        print("Neuron", results)
+        results = dot(self.weights, inputs) + self.bias
 
         if self.activation_function is not None:
             return self.activation_function(results)
@@ -92,13 +85,13 @@ class Neuron:
             return results
 
 
-def relU(x):
+def ReLU(x):
     """
     Rectified linear
     :param x:
     :return:
     """
-    return 0 if x <= 0 else x
+    return maximum(0, x)
 
 
 def tanh(x):
@@ -118,5 +111,6 @@ def sigmoid(x):
 
 
 if __name__ == "__main__":
+    test_layer = HiddenLayer(3, 2)
     print("Try importing instead!")
 
