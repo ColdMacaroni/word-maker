@@ -20,6 +20,12 @@ class Network:
                                   can be an int for uniform layers
         :param n_outputs: The amount of outputs
         """
+        if type(neurons_per_layer) == int:
+            # Create a list of with the same values
+            neurons_per_layer = [neurons_per_layer] * n_layers
+
+        assert len(neurons_per_layer) == n_layers, |
+
         self.layers = list()
 
 
