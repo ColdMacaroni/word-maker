@@ -5,6 +5,7 @@
 
 import numpy as np
 
+
 class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
         # Creates an array of shape inputs, neurons.
