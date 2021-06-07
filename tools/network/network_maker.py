@@ -10,6 +10,21 @@ from numpy import array, zeros, exp, dot, maximum
 from numpy.random import uniform
 
 
+class Network:
+    def __init__(self, n_inputs, n_layers, neurons_per_layer, n_outputs):
+        """
+        Create a neural network! Very nice.
+        :param n_inputs: The amount of inputd
+        :param n_layers: The amount of layers
+        :param neurons_per_layer: A list of neurons per layer,
+                                  can be an int for uniform layers
+        :param n_outputs: The amount of outputs
+        """
+        self.layers = list()
+
+
+
+
 class HiddenLayer:
     def __init__(self, neuron_num, inputs,
                  weights=None, biases=None, activation_function=None):
@@ -40,9 +55,9 @@ class HiddenLayer:
             biases = zeros(neuron_num)
 
         # Create a set of neurons according to the starting weights
-        self.neurons = set()
+        self.neurons = list()
         for i in range(neuron_num):
-            self.neurons.add(Neuron(weights[i], biases[i], activation_function))
+            self.neurons.append(Neuron(weights[i], biases[i], activation_function))
 
         self.output = None
 
