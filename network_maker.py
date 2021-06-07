@@ -6,7 +6,7 @@
 
 # Here goes nothing!
 
-from numpy import array, exp, dot
+from numpy import array, zeros, exp, dot
 from numpy.random import uniform
 
 
@@ -35,11 +35,26 @@ class HiddenLayer:
             # Reshape into 2D array
             weights.reshape((neuron_num, inputs))
 
+        if biases is None:
+            # Set em all to 0
+            biases = zeros(neuron_num)
 
-        self.neurons = list()
-
+        # Create a set of neurons according to the starting weights
+        self.neurons = set()
         for i in range(neuron_num):
-            pass
+            self.neurons.add(Neuron(weights[i], biases[i], activation_function))
+
+    def process(self, inputs: array):
+        """
+        Takes an array of inputs and process them through the neurons!
+        :param inputs: array
+        :return: array
+        """
+        # Pass all the inputs through each neuron and generate an
+        # array/matrix of the results
+        results = array([neuron.process(inputs) for neuron in self.neurons])
+
+        return results
 
 
 class Neuron:
@@ -54,7 +69,7 @@ class Neuron:
         self.bias = bias
         self.activation_function = activation_function
 
-    def calculate(self, inputs: array, weights=None) -> array:
+    def process(self, inputs: array, weights=None) -> array:
         """
         Calculates the given inputs! Yes!
         :param inputs: A numpy array of the inputs!
@@ -67,6 +82,8 @@ class Neuron:
             weights = self.weights
 
         results = dot(weights, inputs.T) + self.bias
+
+        print("Neuron", results)
 
         if self.activation_function is not None:
             return self.activation_function(results)
