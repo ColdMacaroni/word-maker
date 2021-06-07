@@ -33,7 +33,7 @@ class HiddenLayer:
             weights = uniform(-1, 1, neuron_num * inputs)
 
             # Reshape into 2D array
-            weights.reshape((neuron_num, inputs))
+            weights = weights.reshape((inputs, neuron_num))
 
         if biases is None:
             # Set em all to 0
@@ -77,11 +77,11 @@ class Neuron:
                         temporary override
         :return: A numpy array of the results!
         """
-        # This is done in case weights are overriden
+        # This is done in case weights are overridden
         if weights is None:
             weights = self.weights
 
-        results = dot(weights, inputs.T) + self.bias
+        results = dot(weights, inputs) + self.bias
 
         print("Neuron", results)
 
