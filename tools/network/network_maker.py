@@ -8,7 +8,7 @@
 
 from numpy import array, zeros, exp, dot, maximum, ndarray, full
 from numpy.random import uniform
-from json import dumps, loads
+from json import dumps, load
 
 
 class Network:
@@ -193,13 +193,13 @@ class Network:
     def dump(self, filename=None, summary=False):
         """
         Dumps:
-            n_inputs
-            n_layers
-            neurons_per_layer
-            n_outputs
-            activation_functions
-            output_act_func
-        Into the given file, this way they can be used anywhere.
+            Layers
+             -> Neurons
+                 -> Weights
+                 -> Bias
+             -> Activation Func
+
+        Into a json.
         :param filename: The file to dump to
         :param summary: Print the dump then save
         """
@@ -367,6 +367,31 @@ def sigmoid(x):
     """
     # f(x) = 1/(1 + e^(-x))
     return 1 / (1 + exp(-x))
+
+
+def load_nn(filename):
+    """
+    Loads a neural network from a dump
+    :param filename: Path to the dump
+    :return: Network object
+    """
+    # Load file as python dict
+    with open(filename, 'r') as json_file:
+        dump_dict = load(json_file, parse_int=int)
+
+    # The thing reads the keys as strings so uh i guess im doing that
+    n_inputs = len(dump_dict["network"]["0"]["neurons"]["0"]["weights"])
+    # print("n_inputs", n_inputs)
+
+    # Things needed
+    # n_inputs -> Len of weights of 0th layer's 0th neuron
+    # n_layers -> max(dump_dict[network].keys()) Since indexing starts at 0 this'll be fine
+    # neurons_per_layer -> Num of neurons
+    # n_outputs -> Num of -1th layer's neurons
+    # weights -> A list of 2D arrays
+    # biases -> A 2D list,
+    # activation_functions -> activation of each layer, will have to do eval i think, or dict
+    # output_act_func -> activation of -1th layer
 
 
 if __name__ == "__main__":
