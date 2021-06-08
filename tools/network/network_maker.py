@@ -187,7 +187,34 @@ class Network:
                   f"Activation Functions\t\t{self.activation_functions}\n"
                   f"Output Activation function\t{self.output_act_func}\n")
 
+        # Generate a json for this file (Or just a python dict)
+        json = dict()
 
+        # Create a list of the layers
+        json["network"] = list()
+
+        for layer in range(len(self.layers)):
+            json["network"].append({layer: {"neurons": []}})
+
+            for neuron in range(len(self.layers[layer].neurons)):
+                json["network"][layer]["neurons"].append()
+
+            # -- Add the activation layer
+            # The last item is the output layer which has its function
+            # stored in a different var
+            if layer == len(self.layers) - 1:
+                # Only get the name if the var is a function
+                act_func_str = self.output_act_func.__name__\
+                               if callable(self.output_act_func)\
+                               else self.output_act_func
+
+            else:
+                # Only get the name if the var is a function
+                act_func_str = self.activation_functions[layer].__name__\
+                               if callable(self.activation_functions[layer])\
+                               else self.activation_functions[layer]
+
+            json["network"][layer]["activation"] = act_func_str
 
 
 class HiddenLayer:
@@ -246,12 +273,19 @@ class Neuron:
         :param activation_function: The activation function!
         """
         self.weights = list()
-        self.bias = bias
+        self.bias = 0 if bias is None else bias
         self.activation_function = activation_function
 
+        # Generate a random value if it's none
         for weight in weights:
             if weight is None:
                 self.weights.append(uniform(-1, 1))
+
+            else:
+                self.weights.append(weight)
+
+        # Convert to array for easier dot products
+        self.weights = array(self.weights)
 
     def process(self, inputs: array) -> array:
         """
@@ -259,7 +293,6 @@ class Neuron:
         :param inputs: A numpy array of the inputs!
         :return: A numpy array of the results!
         """
-
         results = dot(self.weights, inputs) + self.bias
 
         if self.activation_function is not None:
@@ -307,4 +340,3 @@ if __name__ == "__main__":
     test_network.forward(test_data)
 
     print("Output -> ", test_network.output)
-
