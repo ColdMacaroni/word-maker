@@ -11,7 +11,8 @@ from numpy.random import uniform
 
 
 class Network:
-    def __init__(self, n_inputs, n_layers, neurons_per_layer, n_outputs):
+    def __init__(self, n_inputs, n_layers, neurons_per_layer,
+                 n_outputs, activation_functions=None, output_act_func=None):
         """
         Create a neural network! Very nice.
         :param n_inputs: The amount of inputd
@@ -20,15 +21,54 @@ class Network:
                                   can be an int for uniform layers
         :param n_outputs: The amount of outputs
         """
-        if type(neurons_per_layer) == int:
+        self.output = None
+
+        if type(neurons_per_layer) != list:
             # Create a list of with the same values
             neurons_per_layer = [neurons_per_layer] * n_layers
 
-        assert len(neurons_per_layer) == n_layers, |
+        if type(activation_functions) != list:
+            # Create a list of with the same values
+            activation_functions = [activation_functions] * n_layers
+
+        assert len(neurons_per_layer) == n_layers,\
+            "Discrepancy between neurons per layer and number of layers"
 
         self.layers = list()
 
+        # Add Layer that receives input
+        self.layers.append(HiddenLayer(neurons_per_layer[0],
+                                       n_inputs,
+                                       activation_function=activation_functions[0]))
 
+        for i in range(1, n_layers):
+            self.layers.append(
+                HiddenLayer(
+                    neurons_per_layer[i],
+                    # The amount of neurons of the prev layer == inputs
+                    len(self.layers[-1].neurons),
+                    activation_function=activation_functions[i]
+                )
+            )
+
+        # Add output layer
+        self.layers.append(
+            HiddenLayer(n_outputs,
+                        len(self.layers[-1].neurons),
+                        activation_function=output_act_func)
+        )
+
+    def forward(self, inputs: array):
+        """
+        Process the inputs!
+        :param inputs: Array of inputs
+        """
+        for layer in self.layers:
+            layer.forward(inputs)
+
+            inputs = layer.output
+
+        self.output = inputs
 
 
 class HiddenLayer:
@@ -132,6 +172,6 @@ def sigmoid(x):
 
 
 if __name__ == "__main__":
-    test_layer = HiddenLayer(3, 2)
+    test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
     print("Try importing instead!")
 
