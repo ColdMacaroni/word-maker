@@ -56,7 +56,7 @@ class Network:
                     self.neurons_per_layer[i],
                     # The amount of neurons of the prev layer == inputs
                     len(self.layers[-1].neurons),
-                    activation_function=activation_functions[i]
+                    activation_function=self.activation_functions[i]
                 )
             )
 
@@ -74,12 +74,15 @@ class Network:
         Process the inputs!
         :param inputs: Array of inputs
         """
+        # Transpose inputs to make dot products easier
+        inputs = inputs.T
         for layer in self.layers:
             layer.forward(inputs)
 
             inputs = layer.output
 
-        self.output = inputs
+        # Transpose back to a more readable format
+        self.output = inputs.T
 
     def dump(self, filename):
         """
@@ -197,11 +200,16 @@ def sigmoid(x):
 
 
 if __name__ == "__main__":
+    # This is only used here, no need to add weight when imported
+    from random import randint
+
     test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
 
-    print("test_network.forward(array([2, 2]))")
-    test_network.forward(array([2, 2]))
+    #test_data = uniform(-1, 1, (2, 2))
+    test_data = array([[0.6, 0.4], [-0.2, 1]])
+
+    print(f"test_network.forward({test_data})")
+    test_network.forward(test_data)
 
     print("Output -> ", test_network.output)
 
-    print("Try importing instead!")
