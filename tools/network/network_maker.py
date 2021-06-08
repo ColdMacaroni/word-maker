@@ -38,7 +38,7 @@ class Network:
             # Create a list of with the same values
             self.activation_functions = [self.activation_functions] * self.n_layers
 
-        assert len(self.neurons_per_layer) == self.n_layers,\
+        assert len(self.neurons_per_layer) == self.n_layers, \
             "Discrepancy between neurons per layer and number of layers"
 
         self.layers = list()
@@ -80,6 +80,20 @@ class Network:
             inputs = layer.output
 
         self.output = inputs
+
+    def dump(self, filename):
+        """
+        Dumps:
+            n_inputs
+            n_layers
+            neurons_per_layer
+            n_outputs
+            activation_functions
+            output_act_func
+        Into the given file, this way they can be used anywhere.
+        :param filename: The file to dump to
+        """
+        ...
 
 
 class HiddenLayer:
@@ -179,7 +193,7 @@ def sigmoid(x):
     Sigmoid function
     """
     # f(x) = 1/(1 + e^(-x))
-    return 1/(1 + exp(-x))
+    return 1 / (1 + exp(-x))
 
 
 if __name__ == "__main__":
@@ -191,4 +205,3 @@ if __name__ == "__main__":
     print("Output -> ", test_network.output)
 
     print("Try importing instead!")
-
