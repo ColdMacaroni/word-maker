@@ -23,28 +23,37 @@ class Network:
         """
         self.output = None
 
-        if type(neurons_per_layer) != list:
-            # Create a list of with the same values
-            neurons_per_layer = [neurons_per_layer] * n_layers
+        self.n_inputs = n_inputs
+        self.n_layers = n_layers
+        self.neurons_per_layer = neurons_per_layer
+        self.n_outputs = n_outputs
+        self.activation_functions = activation_functions
+        self.output_act_func = output_act_func
 
-        if type(activation_functions) != list:
+        if type(self.neurons_per_layer) != list:
             # Create a list of with the same values
-            activation_functions = [activation_functions] * n_layers
+            self.neurons_per_layer = [self.neurons_per_layer] * self.n_layers
 
-        assert len(neurons_per_layer) == n_layers,\
+        if type(self.activation_functions) != list:
+            # Create a list of with the same values
+            self.activation_functions = [self.activation_functions] * self.n_layers
+
+        assert len(self.neurons_per_layer) == self.n_layers,\
             "Discrepancy between neurons per layer and number of layers"
 
         self.layers = list()
 
         # Add Layer that receives input
-        self.layers.append(HiddenLayer(neurons_per_layer[0],
-                                       n_inputs,
-                                       activation_function=activation_functions[0]))
+        self.layers.append(
+            HiddenLayer(
+                self.neurons_per_layer[0], self.n_inputs, activation_function=self.activation_functions[0]
+            )
+        )
 
         for i in range(1, n_layers):
             self.layers.append(
                 HiddenLayer(
-                    neurons_per_layer[i],
+                    self.neurons_per_layer[i],
                     # The amount of neurons of the prev layer == inputs
                     len(self.layers[-1].neurons),
                     activation_function=activation_functions[i]
@@ -53,9 +62,11 @@ class Network:
 
         # Add output layer
         self.layers.append(
-            HiddenLayer(n_outputs,
-                        len(self.layers[-1].neurons),
-                        activation_function=output_act_func)
+            HiddenLayer(
+                n_outputs,
+                len(self.layers[-1].neurons),
+                activation_function=output_act_func
+            )
         )
 
     def forward(self, inputs: array):
@@ -173,5 +184,11 @@ def sigmoid(x):
 
 if __name__ == "__main__":
     test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
+
+    print("test_network.forward(array([2, 2]))")
+    test_network.forward(array([2, 2]))
+
+    print("Output -> ", test_network.output)
+
     print("Try importing instead!")
 
