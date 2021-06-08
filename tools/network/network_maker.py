@@ -185,7 +185,7 @@ class Network:
         # Transpose back to a more readable format
         self.output = inputs.T
 
-    def dump(self, filename, print_dump=False):
+    def dump(self, filename=None, summary=False):
         """
         Dumps:
             n_inputs
@@ -199,7 +199,7 @@ class Network:
         :param print_dump: Print the dump then save
         """
         # Info
-        if print_dump:
+        if summary:
             print(f"Inputs\t\t\t\t{self.n_inputs}\n"
                   f"Layers\t\t\t\t{self.n_layers}\n"
                   f"Neurons per layer\t\t{self.neurons_per_layer}\n"
@@ -245,7 +245,11 @@ class Network:
 
             json["network"][layer]["activation"] = act_func_str
 
-        return json
+        if filename is not None:
+            with open(filename, 'w') as f:
+                f.write(str(json))
+        else:
+            return json
 
 
 class HiddenLayer:
