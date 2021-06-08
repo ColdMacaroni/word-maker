@@ -383,10 +383,12 @@ def load_nn(filename):
     n_inputs = len(dump_dict["network"]["0"]["neurons"]["0"]["weights"])
     # print("n_inputs", n_inputs)
 
+    # -1 to skip the output layer
+    n_layers = len(dump_dict["network"]) - 1
+    # print("n_layers", n_layers)
+
     # Things needed
-    # n_inputs -> Len of weights of 0th layer's 0th neuron
-    # n_layers -> max(dump_dict[network].keys()) Since indexing starts at 0 this'll be fine
-    # neurons_per_layer -> Num of neurons
+    # neurons_per_layer -> List, len(dict_dump[network][i][neurons])
     # n_outputs -> Num of -1th layer's neurons
     # weights -> A list of 2D arrays
     # biases -> A 2D list,
