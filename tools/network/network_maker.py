@@ -8,6 +8,7 @@
 
 from numpy import array, zeros, exp, dot, maximum, ndarray, full
 from numpy.random import uniform
+from json import dumps, loads
 
 
 class Network:
@@ -116,15 +117,19 @@ class Network:
             # Create a list of with the same values
             biases_ls = list()
 
+            # This way when initialized with None they
+            # are started with 0
+            repeat_bias = 0 if self.biases is None else self.biases
+
             # Create a 2d list for the biases
             # First dimension is each layer
             # Second dimension is each neuron
             # +1 for output layer
             for layer in range(self.n_layers):
-                biases_ls.append([self.biases] * self.neurons_per_layer[layer])
+                biases_ls.append([repeat_bias] * self.neurons_per_layer[layer])
 
             # Create the biases for the output layer
-            biases_ls.append([self.biases] * self.n_outputs)
+            biases_ls.append([repeat_bias] * self.n_outputs)
 
             self.biases = biases_ls
 
@@ -196,7 +201,7 @@ class Network:
             output_act_func
         Into the given file, this way they can be used anywhere.
         :param filename: The file to dump to
-        :param print_dump: Print the dump then save
+        :param summary: Print the dump then save
         """
         # Info
         if summary:
@@ -207,23 +212,23 @@ class Network:
                   f"Activation Functions\t\t{self.activation_functions}\n"
                   f"Output Activation function\t{self.output_act_func}\n")
 
-        # Generate a json for this file (Or just a python dict)
-        json = dict()
+        # Generate a dump_dict for this file (Or just a python dict)
+        dump_dict = dict()
 
         # Create a list of the layers
-        json["network"] = dict()
+        dump_dict["network"] = dict()
 
         # On each layer
         for layer in range(len(self.layers)):
             # Add key of the layer number with value of a dictionary
             # of that layer's neurons and the activation used
-            json["network"][layer] = {"neurons": dict(),
-                                      "activation": None}
+            dump_dict["network"][layer] = {"neurons": dict(),
+                                           "activation": None}
 
             # On each neuron create a dict of key neuron's position
             # and value another dict with a list
             for neuron in range(len(self.layers[layer].neurons)):
-                json["network"][layer]["neurons"][neuron] = {
+                dump_dict["network"][layer]["neurons"][neuron] = {
                     "weights": list(self.weights[layer][neuron]),
                     "bias": self.biases[layer][neuron]
                 }
@@ -243,13 +248,15 @@ class Network:
                                if callable(self.activation_functions[layer])\
                                else self.activation_functions[layer]
 
-            json["network"][layer]["activation"] = act_func_str
+            dump_dict["network"][layer]["activation"] = act_func_str
+
+        dump_json = dumps(dump_dict)
 
         if filename is not None:
             with open(filename, 'w') as f:
-                f.write(str(json))
+                f.write(dump_json)
         else:
-            return json
+            return dump_json
 
 
 class HiddenLayer:
