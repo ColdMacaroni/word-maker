@@ -6,7 +6,7 @@
 
 # Here goes nothing!
 
-from numpy import array, zeros, exp, dot, maximum, ndarray
+from numpy import array, zeros, exp, dot, maximum, ndarray, full
 from numpy.random import uniform
 
 
@@ -61,21 +61,61 @@ class Network:
             # Create a list of with the same values
             self.activation_functions = [self.activation_functions] * self.n_layers
         
-        if type(self.weights) != list and type(self.weights) != ndarray:
-            # Create a list of with the same values
-            self.weights = [self.weights] * self.n_layers
+        if type(self.weights) != list:
+            # Creates a list of with the same values
+
+            # This list will store a 2d array of each layer's weights
+            weights_ls = list()
+
+            # Create the weights for the input layer
+            # [[1] * 2 ] * 3 => [[1, 1], [1, 1], [1, 1]]
+            weights_ls.append(
+                array([[self.weights] * self.n_inputs]
+                      * self.neurons_per_layer[0])
+            )
+
+            for layer in range(1, self.n_layers):
+                weights_ls.append(
+                    # The amount of weights is the amount of last
+                    # layer's neurons.
+                    array([[self.weights] * len(weights_ls[-1])]
+                          * self.neurons_per_layer[layer])
+                )
+
+            # Add the weights for the output
+            weights_ls.append(
+                # The amount of weights is the amount of last
+                # layer's neurons.
+                array([[self.weights] * len(weights_ls[-1])]
+                      * self.n_outputs)
+            )
+
+            self.weights = weights_ls
             
         if type(self.biases) != list:
             # Create a list of with the same values
-            self.biases = [self.biases] * self.n_layers
+            biases_ls = list()
+
+            # Create a 2d list for the biases
+            # First dimension is each layer
+            # Second dimension is each neuron
+            # +1 for output layer
+            for layer in range(self.n_layers):
+                biases_ls.append([self.biases] * self.neurons_per_layer[layer])
+
+            # Create the biases for the output layer
+            biases_ls.append([self.biases] * self.n_outputs)
+
+            self.biases = biases_ls
 
         assert len(self.neurons_per_layer) == self.n_layers, \
             "Discrepancy between neurons per layer and number of layers"
 
-        assert len(self.weights) == self.n_layers, \
+        # The +1 is there to count the output layer
+        assert len(self.weights) == self.n_layers + 1, \
             "Discrepancy between weights and number of layers"
 
-        assert len(self.biases) == self.n_layers, \
+        assert len(self.biases) == self.n_layers + 1, \
             "Discrepancy between biases per layer and number of layers"
 
         self.layers = list()
@@ -205,9 +245,13 @@ class Neuron:
         :param bias: The bias of this neuron, default is 0
         :param activation_function: The activation function!
         """
-        self.weights = weights
+        self.weights = list()
         self.bias = bias
         self.activation_function = activation_function
+
+        for weight in weights:
+            if weight is None:
+                self.weights.append(uniform(-1, 1))
 
     def process(self, inputs: array) -> array:
         """
