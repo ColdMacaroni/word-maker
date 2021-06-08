@@ -6,13 +6,14 @@
 
 # Here goes nothing!
 
-from numpy import array, zeros, exp, dot, maximum
+from numpy import array, zeros, exp, dot, maximum, ndarray
 from numpy.random import uniform
 
 
 class Network:
     def __init__(self, n_inputs, n_layers, neurons_per_layer,
-                 n_outputs, activation_functions=None, output_act_func=None):
+                 n_outputs, weights=None, biases=None,
+                 activation_functions=None, output_act_func=None):
         """
         Create a neural network! Very nice.
         :param n_inputs: The amount of inputd
@@ -20,6 +21,12 @@ class Network:
         :param neurons_per_layer: A list of neurons per layer,
                                   can be an int for uniform layers
         :param n_outputs: The amount of outputs
+        :param weights: A 3D array of the weights.
+                        First dimension is the layers
+                        Second dimension is the neuron
+                        Third dimension is each input
+        :param biases: A 2D array of the biases
+
         """
         self.output = None
 
@@ -27,8 +34,24 @@ class Network:
         self.n_layers = n_layers
         self.neurons_per_layer = neurons_per_layer
         self.n_outputs = n_outputs
+        self.weights = weights
+        self.biases = biases
         self.activation_functions = activation_functions
         self.output_act_func = output_act_func
+
+        # I Wish this would Work.
+        # These are the args that can be passed as a single value and
+        # then be converted into a list of appropriate size
+        # single_args = [
+        #     self.weights,
+        #     self.biases,
+        #     self.neurons_per_layer,
+        #     self.activation_functions
+        # ]
+        # for arg in single_args:
+        #     if type(arg) != list:
+        #         # Create a list of with the same values
+        #         arg = [arg] * self.n_layers
 
         if type(self.neurons_per_layer) != list:
             # Create a list of with the same values
@@ -37,16 +60,32 @@ class Network:
         if type(self.activation_functions) != list:
             # Create a list of with the same values
             self.activation_functions = [self.activation_functions] * self.n_layers
+        
+        if type(self.weights) != list and type(self.weights) != ndarray:
+            # Create a list of with the same values
+            self.weights = [self.weights] * self.n_layers
+            
+        if type(self.biases) != list:
+            # Create a list of with the same values
+            self.biases = [self.biases] * self.n_layers
 
         assert len(self.neurons_per_layer) == self.n_layers, \
             "Discrepancy between neurons per layer and number of layers"
+
+        assert len(self.weights) == self.n_layers, \
+            "Discrepancy between weights and number of layers"
+
+        assert len(self.biases) == self.n_layers, \
+            "Discrepancy between biases per layer and number of layers"
 
         self.layers = list()
 
         # Add Layer that receives input
         self.layers.append(
             HiddenLayer(
-                self.neurons_per_layer[0], self.n_inputs, activation_function=self.activation_functions[0]
+                self.neurons_per_layer[0], self.n_inputs,
+                weights=self.weights[0], biases=self.biases[0],
+                activation_function=self.activation_functions[0]
             )
         )
 
@@ -56,6 +95,7 @@ class Network:
                     self.neurons_per_layer[i],
                     # The amount of neurons of the prev layer == inputs
                     len(self.layers[-1].neurons),
+                    weights=self.weights[i], biases=self.biases[i],
                     activation_function=self.activation_functions[i]
                 )
             )
@@ -65,6 +105,7 @@ class Network:
             HiddenLayer(
                 n_outputs,
                 len(self.layers[-1].neurons),
+                weights=self.weights[-1], biases=self.biases[-1],
                 activation_function=output_act_func
             )
         )
@@ -84,7 +125,7 @@ class Network:
         # Transpose back to a more readable format
         self.output = inputs.T
 
-    def dump(self, filename):
+    def dump(self, filename, print_dump=False):
         """
         Dumps:
             n_inputs
@@ -95,8 +136,18 @@ class Network:
             output_act_func
         Into the given file, this way they can be used anywhere.
         :param filename: The file to dump to
+        :param print_dump: Print the dump then save
         """
-        ...
+        # Info
+        if print_dump:
+            print(f"Inputs\t\t\t\t{self.n_inputs}\n"
+                  f"Layers\t\t\t\t{self.n_layers}\n"
+                  f"Neurons per layer\t\t{self.neurons_per_layer}\n"
+                  f"Outputs\t\t\t\t{self.n_outputs}\n"
+                  f"Activation Functions\t\t{self.activation_functions}\n"
+                  f"Output Activation function\t{self.output_act_func}\n")
+
+
 
 
 class HiddenLayer:
