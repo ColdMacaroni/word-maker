@@ -191,15 +191,24 @@ class Network:
         json = dict()
 
         # Create a list of the layers
-        json["network"] = list()
+        json["network"] = dict()
 
+        # On each layer
         for layer in range(len(self.layers)):
-            json["network"].append({layer: {"neurons": []}})
+            # Add key of the layer number with value of a dictionary
+            # of that layer's neurons and the activation used
+            json["network"][layer] = {"neurons": dict(),
+                                      "activation": None}
 
+            # On each neuron create a dict of key neuron's position
+            # and value another dict with a list
             for neuron in range(len(self.layers[layer].neurons)):
-                json["network"][layer]["neurons"].append()
+                json["network"][layer]["neurons"][neuron] = {
+                    "weights": list(self.weights[layer][neuron]),
+                    "bias": self.biases[layer][neuron]
+                }
 
-            # -- Add the activation layer
+            # -- Add the activation func
             # The last item is the output layer which has its function
             # stored in a different var
             if layer == len(self.layers) - 1:
@@ -215,6 +224,8 @@ class Network:
                                else self.activation_functions[layer]
 
             json["network"][layer]["activation"] = act_func_str
+
+        return json
 
 
 class HiddenLayer:
@@ -331,12 +342,16 @@ if __name__ == "__main__":
     # This is only used here, no need to add weight when imported
     from random import randint
 
+    print("test_network = Network(2, 5, 10, 1, activation_functions=ReLU)")
     test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
 
     #test_data = uniform(-1, 1, (2, 2))
     test_data = array([[0.6, 0.4], [-0.2, 1]])
 
-    print(f"test_network.forward({test_data})")
+    print(f"test_network.forward(\n{test_data}\n)")
     test_network.forward(test_data)
 
-    print("Output -> ", test_network.output)
+    print()
+
+    print("Output:")
+    print(str(test_network.output))
