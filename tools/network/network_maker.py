@@ -69,26 +69,46 @@ class Network:
 
             # Create the weights for the input layer
             # [[1] * 2 ] * 3 => [[1, 1], [1, 1], [1, 1]]
-            weights_ls.append(
-                array([[self.weights] * self.n_inputs]
-                      * self.neurons_per_layer[0])
-            )
-
-            for layer in range(1, self.n_layers):
+            if self.weights is None:
+                # Add a 2D list of random weights
                 weights_ls.append(
-                    # The amount of weights is the amount of last
-                    # layer's neurons.
-                    array([[self.weights] * len(weights_ls[-1])]
-                          * self.neurons_per_layer[layer])
+                    array([[uniform(-1, 1) for i in range(self.n_inputs)]
+                           for n in range(self.neurons_per_layer[0])])
+                )
+            else:
+                weights_ls.append(
+                    array([[self.weights] * self.n_inputs]
+                          * self.neurons_per_layer[0])
                 )
 
+            for layer in range(1, self.n_layers):
+                if self.weights is None:
+                    weights_ls.append(
+                        # The amount of weights is the amount of last
+                        # layer's neurons.
+                        array([[uniform(-1, 1) for i in range(len(weights_ls[-1]))]
+                               for n in range(self.neurons_per_layer[layer])])
+                    )
+                else:
+                    weights_ls.append(
+                        # The amount of weights is the amount of last
+                        # layer's neurons.
+                        array([[self.weights] * len(weights_ls[-1])]
+                              * self.neurons_per_layer[layer])
+                    )
+
             # Add the weights for the output
-            weights_ls.append(
-                # The amount of weights is the amount of last
-                # layer's neurons.
-                array([[self.weights] * len(weights_ls[-1])]
-                      * self.n_outputs)
-            )
+            if self.weights is None:
+                # Add a 2D list of random weights
+                weights_ls.append(
+                    array([[uniform(-1, 1) for i in range(len(weights_ls[-1]))]
+                           for n in range(self.n_outputs)])
+                )
+            else:
+                weights_ls.append(
+                    array([[self.weights] * len(weights_ls[-1])]
+                          * self.n_outputs)
+                )
 
             self.weights = weights_ls
             
