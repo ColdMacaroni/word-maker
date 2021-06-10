@@ -387,8 +387,16 @@ def load_nn(filename):
     n_layers = len(dump_dict["network"]) - 1
     # print("n_layers", n_layers)
 
+    # Remove the last item because thats the num of outputs
+    neurons_per_layer = [len(layer["neurons"])
+                         for layer in dump_dict["network"].values()]
+
+    n_outputs = neurons_per_layer.pop(-1)
+
+    print("neurons_per_layer", neurons_per_layer)
+    print("n_outputs", n_outputs)
+
     # Things needed
-    # neurons_per_layer -> List, len(dict_dump[network][i][neurons])
     # n_outputs -> Num of -1th layer's neurons
     # weights -> A list of 2D arrays
     # biases -> A 2D list,
@@ -403,7 +411,7 @@ if __name__ == "__main__":
     print("test_network = Network(2, 5, 10, 1, activation_functions=ReLU)")
     test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
 
-    #test_data = uniform(-1, 1, (2, 2))
+    # test_data = uniform(-1, 1, (2, 2))
     test_data = array([[0.6, 0.4], [-0.2, 1]])
 
     print(f"test_network.forward(\n{test_data}\n)")
@@ -413,3 +421,6 @@ if __name__ == "__main__":
 
     print("Output:")
     print(str(test_network.output))
+
+    print("loaded_nn = load_nn(\"dumps/test.json\")")
+    loaded_nn = load_nn("dumps/test.json")
