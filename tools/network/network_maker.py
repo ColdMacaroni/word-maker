@@ -6,7 +6,8 @@
 
 # Here goes nothing!
 
-from numpy import array, zeros, exp, dot, maximum, ndarray, full
+from numpy import array, zeros, exp, dot, maximum
+from numpy import sum as np_sum
 from numpy.random import uniform
 from json import dumps, load
 
@@ -305,7 +306,7 @@ class HiddenLayer:
         # array/matrix of the results
         self.output = array([neuron.process(inputs) for neuron in self.neurons])
 
-
+# TODO: Remove neuron class, hidden layer can work fine without it
 class Neuron:
     def __init__(self, weights: array, bias=0, activation_function=None):
         """
@@ -367,6 +368,18 @@ def sigmoid(x):
     """
     # f(x) = 1/(1 + e^(-x))
     return 1 / (1 + exp(-x))
+
+
+# def soft_max(x):
+#     """
+#     Soft max function
+#     :param x:
+#     :return:
+#     """
+#     exp_xs = exp(x)
+#
+#     # Normalize, getting the sum of the rows
+#     return exp_xs / np_sum(exp_xs, axis=1, keepdims=True)
 
 
 def load_nn(filename):
