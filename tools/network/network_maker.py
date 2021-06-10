@@ -393,21 +393,65 @@ def load_nn(filename):
 
     n_outputs = neurons_per_layer.pop(-1)
 
-    print("neurons_per_layer", neurons_per_layer)
-    print("n_outputs", n_outputs)
+    # print("neurons_per_layer", neurons_per_layer)
+    # print("n_outputs", n_outputs)
 
-    # Things needed
-    # n_outputs -> Num of -1th layer's neurons
-    # weights -> A list of 2D arrays
-    # biases -> A 2D list,
-    # activation_functions -> activation of each layer, will have to do eval i think, or dict
-    # output_act_func -> activation of -1th layer
+    # A list of 2D arrays
+    weights = list()
+
+    # A 2D list
+    biases = list()
+
+    # Just a list
+    activation_functions = list()
+    for layer in dump_dict["network"].values():
+        # This will get turned into an array, contains
+        # arrays of each neuron's weights
+        neuron_weights = list()
+        neuron_biases = []
+        for neuron in layer["neurons"].values():
+            neuron_weights.append(array(neuron["weights"]))
+            neuron_biases.append(neuron["bias"])
+
+        weights.append(array(neuron_weights))
+        biases.append(neuron_biases)
+
+        # These are strings, should be passes through dict
+        activation_functions.append(layer["activation"])
+
+    # print("weights", weights)
+    # print("biases", biases)
+
+    # Used to translate into actual functions
+    act_func_dict = {
+        "ReLU": ReLU,
+        "tanh": tanh,
+        "sigmoid": sigmoid,
+        None: None
+    }
+
+    # Replace from strings to callable functions
+    activation_functions = [act_func_dict[act_func]
+                            for act_func in activation_functions]
+
+    # Last item is the act func for the output layer
+    output_act_func = activation_functions.pop(-1)
+
+    # print("activation_functions", activation_functions)
+    # print("output_act_func", output_act_func)
+
+    # Create the object! Finally!
+    return Network(n_inputs=n_inputs,
+                   n_layers=n_layers,
+                   neurons_per_layer=neurons_per_layer,
+                   n_outputs=n_outputs,
+                   weights=weights,
+                   biases=biases,
+                   activation_functions=activation_functions,
+                   output_act_func=output_act_func)
 
 
 if __name__ == "__main__":
-    # This is only used here, no need to add weight when imported
-    from random import randint
-
     print("test_network = Network(2, 5, 10, 1, activation_functions=ReLU)")
     test_network = Network(2, 5, 10, 1, activation_functions=ReLU)
 
